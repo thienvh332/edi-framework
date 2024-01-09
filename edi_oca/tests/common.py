@@ -74,7 +74,7 @@ class EDIBackendTestMixin(object):
         return model.create(vals)
 
 
-@tagged("-at_install", "post_install")
+@tagged("at_install", "-post_install")
 class EDIBackendCommonTestCase(TransactionCase, EDIBackendTestMixin):
     @classmethod
     def setUpClass(cls):
