@@ -46,7 +46,7 @@ class EDIAutoExchangeConsumerMixin(models.AbstractModel):
         if todo:
             # TODO: schedule call on post commit
             candidates._edi_auto_handle(todo)
-        return rec
+        return records
 
     def write(self, vals):
         todo = None
