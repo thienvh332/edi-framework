@@ -294,3 +294,35 @@ class EDIExchangeConsumerMixin(models.AbstractModel):
     def _edi_get_origin(self):
         self.ensure_one()
         return self.origin_exchange_record_id
+
+    def _edi_send_via_edi(self, exchange_type, **kw):
+        exchange_record = self._edi_create_exchange_record(exchange_type)
+        exchange_record.action_exchange_generate_send(**kw)
+
+    def _edi_send_via_email(
+        self, ir_action, subtype_ref=None, partner_method=None, partners=None
+    ):
+        # Retrieve context and composer model
+        ctx = ir_action.get("context", {})
+        composer_model = self.env[ir_action["res_model"]].with_context(**ctx)
+
+        # Determine subtype and partner_ids dynamically based on model-specific logic
+        subtype = subtype_ref and self.env.ref(subtype_ref) or None
+        if not subtype:
+            return False
+
+        composer = composer_model.create({"subtype_id": subtype.id})
+        composer.onchange_template_id_wrapper()
+
+        # Dynamically retrieve partners based on the provided method
+        # or fallback to parameter
+        if partner_method and hasattr(self, partner_method):
+            composer.partner_ids = getattr(self, partner_method)().ids
+        elif partners:
+            composer.partner_ids = partners.ids
+        else:
+            return False
+
+        # Send the email
+        composer.send_mail()
+        return True
