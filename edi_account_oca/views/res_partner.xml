@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2020 Creu Blanca
+     License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record model="ir.ui.view" id="view_partner_form">
+        <field name="name">res.partner.form (in edi_account)</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="account.view_partner_property_form" />
+        <field name="arch" type="xml">
+            <!-- TODO: Move this conf inside `edi` page from edi_oca. -->
+            <group name="accounting_entries" position="after">
+                <group name="edi_configuration" string="EDI Configuration" />
+            </group>
+        </field>
+    </record>
+    <record id="view_partner_form_inherit" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.account</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page name="edi_configuration" string="Edi Configurations">
+                    <group string="EDI Account Configurations">
+                        <field
+                            name="edi_account_conf_ids"
+                            widget="one2many_list"
+                            nolabel="1"
+                        />
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
